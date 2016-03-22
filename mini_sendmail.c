@@ -94,6 +94,14 @@ static void sigcatch( int sig );
 static void show_error( char* cause );
 
 
+char *strcpy_overlap(char *dest, const char *src){
+  char *destcopy=dest;
+  while(*dest++ = *src++)
+        ;
+  return destcopy;
+}
+
+
 int
 main( int argc, char** argv )
     {
@@ -177,7 +185,7 @@ main( int argc, char** argv )
 
     /* Strip off any angle brackets in the from address. */
     while ( from[0] == '<' )
-	(void) strcpy( from, &from[1] );
+	(void) strcpy_overlap( from, &from[1] );
     while ( from[strlen(from)-1] == '>' )
 	from[strlen(from)-1] = '\0';
 
@@ -514,7 +522,7 @@ parse_for_recipients( char* message )
 		if ( bcc != (char*) 0 )
 		    {
 		    /* Elide the Bcc: line, and reset cp. */
-		    (void) strcpy( bcc, cp + 1 );
+		    (void) strcpy_overlap( bcc, cp + 1 );
 		    cp = bcc - 1;
 		    bcc = (char*) 0;
 		    }
