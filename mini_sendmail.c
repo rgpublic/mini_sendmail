@@ -92,11 +92,12 @@ static void send_data( char* data );
 static void send_done( void );
 static void sigcatch( int sig );
 static void show_error( char* cause );
+static char *strcpy_overlap(char *dest, const char *src);
 
 
 char *strcpy_overlap(char *dest, const char *src){
   char *destcopy=dest;
-  while(*dest++ = *src++)
+  while((*dest++ = *src++))
         ;
   return destcopy;
 }
@@ -357,7 +358,7 @@ make_received( char* from, char* username, char* hostname )
 
     t = time( (time_t*) 0 );
     tmP = localtime( &t );
-    (void) strftime( timestamp, sizeof(timestamp), "%a, %d %b %Y %T %Z", tmP );
+    (void) strftime( timestamp, sizeof(timestamp), "%a, %d %b %Y %H:%M:%S %Z", tmP );
     received_size =
 	500 + strlen( from ) + strlen( hostname ) * 2 + strlen( MINI_SENDMAIL_VERSION ) +
 	strlen( timestamp ) + strlen( username );
