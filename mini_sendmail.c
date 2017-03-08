@@ -518,6 +518,10 @@ parse_for_recipients( char* message )
 	    switch ( *cp )
 		{
 		case '\n':
+		if (*(cp+1)==' ') {
+			cp++;
+			break;
+		}
 		add_recipient( recip, ( cp - recip ) );
 		state = ST_BOL;
 		if ( bcc != (char*) 0 )
@@ -546,7 +550,7 @@ add_recipient( char* recipient, int len )
     int status;
 
     /* Skip leading whitespace. */
-    while ( len > 0 && ( *recipient == ' ' || *recipient == '\t' ) )
+    while ( len > 0 && ( *recipient == ' ' || *recipient == '\t' || *recipient == '\n' ) )
 	{
 	++recipient;
 	--len;
@@ -560,7 +564,7 @@ add_recipient( char* recipient, int len )
 			recipient = ptr+1;
 		}
 	}
-    while ( len > 0 && recipient[len-1] == '>' )
+    while ( len > 0 && (recipient[len-1] == '>' || recipient[len-1] == '\n' || recipient[len-1] == ' ') )
 	--len;
 
     (void) snprintf( buf, sizeof(buf), "RCPT TO:<%.*s>", len, recipient );
