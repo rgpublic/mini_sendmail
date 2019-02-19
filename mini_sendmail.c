@@ -117,6 +117,9 @@ main( int argc, char** argv )
     int status;
     char buf[2000];
 
+    int extran = 0;
+    char (*extra_headers[10]);
+
     /* Parse args. */
     argv0 = argv[0];
     fake_from = (char*) 0;
@@ -140,7 +143,10 @@ main( int argc, char** argv )
 	else if ( strncmp( argv[argn], "-p", 2 ) == 0 && argv[argn][2] != '\0' )
 	    port = atoi( &(argv[argn][2]) );
 #endif /* DO_MINUS_SP */
-	else if ( strncmp( argv[argn], "-T", 2 ) == 0 && argv[argn][2] != '\0' )
+    else if ( strncmp( argv[argn], "-x", 2 ) == 0 && argv[argn][2] != '\0' ) {
+        extra_headers[extran] = &(argv[argn][2]);
+        extran++;
+	} else if ( strncmp( argv[argn], "-T", 2 ) == 0 && argv[argn][2] != '\0' )
 	    timeout = atoi( &(argv[argn][2]) );
 	else if ( strcmp( argv[argn], "-v" ) == 0 )
 	    verbose = 1;
@@ -266,6 +272,12 @@ main( int argc, char** argv )
 #ifdef DO_RECEIVED
     send_data( received );
 #endif /* DO_RECEIVED */
+
+    for (int k=0;k<extran;k++) {
+        fprintf(sockwfp,"%s\r\n",extra_headers[k]);
+        printf(">>>> %s\r\n",extra_headers[k]);
+    }
+
     send_data( message );
     send_done();
     status = read_response();
@@ -302,7 +314,7 @@ usage( void )
 #else /* DO_MINUS_SP */
     char* spflag = "";
 #endif /* DO_MINUS_SP */
-    (void) fprintf( stderr, "usage:  %s [-f<name>] [-t] %s[-T<timeout>] [-v] [address ...]\n", argv0, spflag );
+    (void) fprintf( stderr, "usage:  %s [-f<name>] [-t] %s[-T<timeout>] [-v] [-x<additional_header>] [address ...]\n", argv0, spflag );
     exit( 1 );
     }
 
